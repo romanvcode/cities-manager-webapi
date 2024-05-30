@@ -43,6 +43,17 @@ apiVersioningBuilder.AddApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// CORS: localhost:4200 is the Angular app
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        policyBuilder
+        .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
+        .WithHeaders("Authorization", "origin", "accept", "content-type");
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,6 +68,10 @@ app.UseSwaggerUI(option =>
     option.SwaggerEndpoint("/swagger/v1/swagger.json", "1.0");
     option.SwaggerEndpoint("/swagger/v2/swagger.json", "2.0");
 }); // cerates swagger UI for testing all web API endpoints / action methods
+
+app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthorization();
 
