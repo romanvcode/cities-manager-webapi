@@ -43,14 +43,23 @@ apiVersioningBuilder.AddApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-// CORS: localhost:4200 is the Angular app
+// CORS: localhost:4200 is the Angular app, localhost:4100
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policyBuilder =>
     {
         policyBuilder
         .WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
-        .WithHeaders("Authorization", "origin", "accept", "content-type");
+        .WithHeaders("Authorization", "origin", "accept", "content-type")
+        .WithMethods("GET", "POST", "PUT", "DELETE");
+    });
+
+    options.AddPolicy("4100Client", policyBuilder =>
+    {
+        policyBuilder
+        .WithOrigins(builder.Configuration.GetSection("AllowedOrigins2").Get<string[]>())
+        .WithHeaders("Authorization", "origin", "accept")
+        .WithMethods("GET");
     });
 });
 
